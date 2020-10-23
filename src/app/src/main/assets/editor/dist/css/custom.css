@@ -1,0 +1,40 @@
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url(../fonts/glyphicons-halflings-regular.woff2) format("woff2");
+}
+ 
+.glyphicon {
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  -webkit-font-smoothing: antialiased;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -moz-osx-font-smoothing: grayscale;
+}
+.glyphicon-cog:before {
+  content: "\e019";
+}
+.diaryeditor {
+ margin: -10px;
+}
+
+.note-statusbar {
+  display:none
+}
+
+div.crop {
+  height: 100px;
+  width: 150px;
+  overflow: hidden;
+}
+div.crop img {
+  margin: -100px -100px 0 0;
+}
+
+.col-split-4{
+    float: left;
+    width:33.3%;
+}

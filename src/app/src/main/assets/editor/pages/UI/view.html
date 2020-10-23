@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>永恒日记 | 写日记</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="../../dist/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+  <!-- Custom style -->
+  <link rel="stylesheet" href="../../dist/css/custom.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="../../plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <!-- Toastr -->
+  <link rel="stylesheet" href="../../plugins/toastr/toastr.min.css">
+  
+  <script src="../../dist/js/custom.js"></script>
+  
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+    </ul>
+
+    <!-- SEARCH FORM -->
+    <form class="form-inline ml-1">
+      <div class="input-group input-group-sm">
+        <input class="form-control form-control-navbar" id="searchKey" type="search" placeholder="" aria-label="Search">
+        <div class="input-group-append">
+          <button class="btn btn-navbar" onclick="searchDiary();return false;" type="submit">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>      
+    </form>
+
+  
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="./index.html" class="brand-link">
+      <img src="../../dist/img/logo.png"
+           alt=""
+           class="brand-image img-circle elevation-3"
+           style="opacity: .8">
+      <span class="brand-text font-weight-light">永恒日记</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+     
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+          <li class="nav-item">  
+            <a href="../UI/index.html" class="nav-link">  
+              <i class="nav-icon far fa-list-alt"></i>  
+              <p data-i18n-text="menu_dlist">日记列表</p>  
+            </a>  
+          </li>            
+          <li class="nav-item">  
+            <a href="../UI/editors.html" class="nav-link">  
+              <i class="nav-icon fa fa-edit"></i>  
+              <p>  
+                <p data-i18n-text="menu_newd">写日记</p> 
+              </p>  
+            </a>  
+          </li>  
+            
+          <li class="nav-item">  
+            <a href="classes.html" class="nav-link">  
+              <i class="nav-icon fas fa-th"></i>  
+              <p data-i18n-text="menu_class">分类</p>  
+            </a>  
+          </li>  
+          <li class="nav-item">  
+            <a href="export.html" class="nav-link">  
+              <i class="nav-icon fa fa-file-export"></i>  
+              <p data-i18n-text="menu_dump">导入导出</p>  
+            </a>  
+          </li>  
+          <li class="nav-item">  
+            <a href="setting.html" class="nav-link">  
+              <i class="nav-icon glyphicon glyphicon-cog"></i>  
+              <p data-i18n-text="menu_setting">参数设置</p>  
+            </a>  
+          </li>  
+          <li class="nav-item">  
+            <a href="about.html" class="nav-link">  
+              <i class="nav-icon fas fa-question-circle"></i>  
+              <p data-i18n-text="txtAbout">关于</p>  
+            </a>  
+          </li>
+          <li class="nav-item">  
+            <a href="JavaScript:logout()" class="nav-link">  
+              <i class="nav-icon fas fa-sign-out-alt"></i>  
+              <p data-i18n-text="menu_exit">退出</p>  
+            </a>  
+          </li> 
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" style="padding: 0px 0px 15px 0px;vertical-align: middle;">
+
+    <!-- Main content -->
+    <section class="content">
+      <div  class="container-fluid">
+         <div class="row">
+            <div  class="col-6" id="logWeather"></div>
+            <div  class="col-6" id="logClass"></div>
+         </div>
+         <hr>
+         <div id="content"></div>
+      </div>
+      
+      <div class="modal fade" id="modal-lock">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title" data-i18n-text="lock_tip">请输入口令</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                  <input type="password" class="form-control" id="lockPwd" placeholder="">
+                </div>
+                <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-info" data-dismiss="modal">关闭</button>
+                  <button type="button" class="btn btn-info" id="btnLockPwd">确定</button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+          </div>
+          <!-- /.modal -->
+      
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer">
+        <div class="rows" style="padding: 0px 0px 15px 0px;vertical-align: middle;">
+          <div class="col-sm-2 col-md-4 col-split-4">
+            <a class="btn" onClick="edit();"> <i class="fas fa-edit"></i><span data-i18n-text="btnEdit">编辑</span></a>
+          </div>
+          <div class="col-sm-2 col-md-4 col-split-4" id="colLock">
+            
+          </div>
+           <div class="col-sm-2 col-md-4 col-split-4">
+            <a class="btn  float-right" onClick="del();"> <i class="fas fa-trash"></i><span data-i18n-text="btnDel">删除</span></a>
+          </div>
+          <!-- /.col -->
+        </div>
+  </footer>
+
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="../../plugins/jquery/jquery.min.js"></script>
+<script src="../../dist/js/jquery.i18n.properties.js"></script>
+<!-- Bootstrap 4 -->
+<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="../../dist/js/demo.js"></script>
+<!-- SweetAlert2 -->
+<script src="../../plugins/sweetalert2/sweetalert2.min.js"></script>
+<!-- Toastr -->
+<script src="../../plugins/toastr/toastr.min.js"></script>
+<!-- Summernote -->
+<script src="../../plugins/summernote/summernote-bs4.min.js"></script>
+<script type="text/javascript">
+  $(function() {
+    Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+  });
+</script>
+<script language="JavaScript">
+  loadLanguages();
+  var passed = false;
+  var id= getUrlParam("id");
+  var log = null;
+  var preid = null;
+  var nextid = null;
+  if(typeof Diary == 'undefined')
+  {
+    log= "";
+  }else{
+    log = JSON.parse(Diary.loadLog(id, 0));
+    preid = log.preid;
+    nextid = log.nextid;
+  }
+  var lockpwd = log.passwd;
+  if(isLock())
+  {
+     $('#modal-lock').modal('show');
+     $('#colLock').html('');
+     $('#colLock').append('<a class="btn" onClick="unlock();"> <i class="fas fa-unlock"></i><span data-i18n-text="btnUnLock">'+$.i18n.prop('btnUnLock')+'</span></a>');
+  }else{
+     displayContent();
+     $('#colLock').append('<a class="btn" onClick="showlock();"> <i class="fas fa-lock"></i><span data-i18n-text="btnLock">'+$.i18n.prop('btnLock')+'</span></a>');
+  }
+  
+  function edit()
+  {
+    if(checklock())
+    {
+     window.location.href="editors.html?id="+id;
+    }
+  }
+  
+  function displayContent()
+  {
+     passed = true;
+     $("#logClass").append(log.class);
+     $("#logWeather").append(log.posttime.substr(0, 16));
+     $("#content").append(log.content);
+     if(!isEmpty(log.bg))
+     {
+        $(".content-wrapper").css("background-image","url(../../dist/bg/"+log.bg+")");
+     }
+     
+  }
+  function checklock()
+  {
+     if(!passed) history.back();
+     return passed;
+  }
+  function del()
+  {
+    if(checklock())
+    {
+        Diary.del(id);
+        window.history.back();
+    }
+  }
+  function unlock()
+  {
+     if(checklock())
+     {
+        Diary.setPwd(id, '');
+        Toast.fire({icon: 'info',title: $.i18n.prop('unlockOK')});
+        $('#colLock').html('');
+        $('#colLock').append('<a class="btn" onClick="showlock();"> <i class="fas fa-lock"></i><span data-i18n-text="btnLock">'+$.i18n.prop('btnLock')+'</span></a>');
+        lockpwd = '';
+     }
+     
+  }
+  
+  function lock()
+  {
+     lockpwd = $("#lockPwd").val();
+     Diary.setPwd(id, lockpwd);
+     $('#modal-lock').modal('hide');
+     $('#colLock').html('');
+     $('#colLock').append('<a class="btn" onClick="unlock();"> <i class="fas fa-unlock"></i><span data-i18n-text="btnUnLock">'+$.i18n.prop('btnUnLock')+'</span></a>');
+  }
+  function showlock()
+  {
+     $('#modal-lock').modal('show');
+  }
+  
+  function isLock()
+  {
+     return !(typeof(lockpwd) == "undefined" || lockpwd.length==0);
+  }
+  function goto_next()
+  {
+    if(!isEmpty(nextid))
+    {
+        window.location.href="view.html?id="+nextid;
+    }
+  }
+  
+  function goto_pre()
+  {
+    if(!isEmpty(preid))
+    {
+        window.location.href="view.html?id="+preid;
+    }
+  }
+  
+  $("#btnLockPwd").click(function(){
+       if(isLock())
+       {
+          //比较是否相同
+          if($("#lockPwd").val() == lockpwd)
+          {
+             $('#modal-lock').modal('hide');
+             displayContent();
+          }else{
+            Toast.fire({
+                icon: 'info',
+                title: $.i18n.prop('passwordMismatch')
+             });
+             //history.back();
+          }
+       }else{
+           lock();           
+       }    
+    });
+  
+  var lasttouchtime = 0;
+  $("body").on("touchstart", function(e) {
+    e.preventDefault();
+    startX = e.originalEvent.changedTouches[0].pageX,
+    startY = e.originalEvent.changedTouches[0].pageY;
+    });
+  
+  $("body").on("touchmove", function(e) {
+        e.preventDefault();
+        moveEndX = e.originalEvent.changedTouches[0].pageX,
+        moveEndY = e.originalEvent.changedTouches[0].pageY,
+        X = moveEndX - startX,
+        Y = moveEndY - startY;
+        var now= new Date();
+        var nowms = now.getTime();
+        console.log(X, Y);
+        if(nowms-lasttouchtime>500)
+        {
+            if ( Math.abs(X) > Math.abs(Y)+5 && X > 0) {
+                console.log("gotopre");
+                goto_pre();
+            }
+            else if ( Math.abs(X) > Math.abs(Y)+5 && X < 0 ) {
+                 console.log("gotonext");
+                goto_next();
+            }
+            else if ( Math.abs(Y) > Math.abs(X) && Y > 0) {
+                alert("top 2 bottom");
+            }
+            else if ( Math.abs(Y) > Math.abs(X) && Y < 0 ) {
+                //alert("bottom 2 top");
+            }
+            else{
+                //alert("just touch");
+            }
+        }
+        lasttouchtime= nowms;
+        
+    });
+</script>
+</body>
+</html>

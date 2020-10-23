@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>永恒日记</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="../../dist/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+  <!-- Custom style -->
+  <link rel="stylesheet" href="../../dist/css/custom.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="../../plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <!-- Toastr -->
+  <link rel="stylesheet" href="../../plugins/toastr/toastr.min.css">
+  
+  <script src="../../dist/js/custom.js"></script>
+  <link  href="../../dist/viewer/viewer.min.css" rel="stylesheet">
+  <script src="../../dist/viewer/viewer.min.js"></script>
+   <style>
+    .pictures {
+      list-style: none;
+      margin: 0;
+      max-width: 30rem;
+      padding: 0;
+    }
+
+    .pictures > li {
+      border: 1px solid transparent;
+      float: left;
+      height: calc(100% / 3);
+      margin: 0 -1px -1px 0;
+      overflow: hidden;
+      width: calc(100% / 3);
+    }
+
+    .pictures > li > img {
+      cursor: zoom-in;
+      width: 100%;
+    }
+
+    .viewer-download {
+      color: #fff;
+      font-family: FontAwesome, serif;
+      font-size: 0.75rem;
+      line-height: 1.5rem;
+      text-align: center;
+    }
+
+    .viewer-download::before {
+      content: "\f019";
+    }
+  </style>
+  
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+    </ul>
+
+    <!-- SEARCH FORM -->
+    <form class="form-inline ml-1">
+      <div class="input-group input-group-sm">
+        <input class="form-control form-control-navbar" id="searchKey" type="search" placeholder="" aria-label="Search">
+        <div class="input-group-append">
+          <button class="btn btn-navbar" onclick="searchDiary();return false;" type="submit">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>      
+    </form>
+
+  
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="./index.html" class="brand-link">
+      <img src="../../dist/img/logo.png"
+           alt="永恒日记ForeverDiary"
+           class="brand-image img-circle elevation-3"
+           style="opacity: .8">
+      <span class="brand-text font-weight-light">永恒日记</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+     
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+          <li class="nav-item">  
+            <a href="../UI/index.html" class="nav-link">  
+              <i class="nav-icon far fa-list-alt"></i>  
+              <p data-i18n-text="menu_dlist">日记列表</p>  
+            </a>  
+          </li>            
+          <li class="nav-item">  
+            <a href="../UI/editors.html" class="nav-link">  
+              <i class="nav-icon fa fa-edit"></i>  
+              <p>  
+                <p data-i18n-text="menu_newd">写日记</p> 
+              </p>  
+            </a>  
+          </li>  
+            
+          <li class="nav-item">  
+            <a href="classes.html" class="nav-link">  
+              <i class="nav-icon fas fa-th"></i>  
+              <p data-i18n-text="menu_class">分类</p>  
+            </a>  
+          </li>  
+          <li class="nav-item">  
+            <a href="export.html" class="nav-link">  
+              <i class="nav-icon fa fa-file-export"></i>  
+              <p data-i18n-text="menu_dump">导入导出</p>  
+            </a>  
+          </li>  
+          <li class="nav-item">  
+            <a href="setting.html" class="nav-link">  
+              <i class="nav-icon glyphicon glyphicon-cog"></i>  
+              <p data-i18n-text="menu_setting">参数设置</p>  
+            </a>  
+          </li>  
+          <li class="nav-item">  
+            <a href="about.html" class="nav-link">  
+              <i class="nav-icon fas fa-question-circle"></i>  
+              <p data-i18n-text="txtAbout">关于</p>  
+            </a>  
+          </li>
+          <li class="nav-item">  
+            <a href="JavaScript:logout()" class="nav-link">  
+              <i class="nav-icon fas fa-sign-out-alt"></i>  
+              <p data-i18n-text="menu_exit">退出</p>  
+            </a>  
+          </li> 
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+
+    <!-- Main content -->
+    <section class="content">
+      <div  class="container-fluid">
+         <div class="row">
+            <div  class="col-6" id="logWeather"></div>
+            <div  class="col-6" id="logClass"></div>
+         </div>
+         <hr>
+         <div id="content">
+            
+            <div id="galley">
+              <ul class="pictures" id="imglist">
+              </ul>
+            </div>
+            
+         </div>
+      </div>
+      
+          
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="../../plugins/jquery/jquery.min.js"></script>
+<script src="../../dist/js/jquery.i18n.properties.js"></script>
+<!-- Bootstrap 4 -->
+<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="../../dist/js/demo.js"></script>
+<!-- SweetAlert2 -->
+<script src="../../plugins/sweetalert2/sweetalert2.min.js"></script>
+<!-- Toastr -->
+<script src="../../plugins/toastr/toastr.min.js"></script>
+<!-- Summernote -->
+<script src="../../plugins/summernote/summernote-bs4.min.js"></script>
+<script type="text/javascript">
+  $(function() {
+    Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+  });
+</script>
+<script>
+    
+    window.addEventListener('DOMContentLoaded', function () {
+      loadImgs();
+      var galley = document.getElementById('galley');
+      var viewer = new Viewer(galley, {
+        url: 'data-original',
+        toolbar: {
+          oneToOne: true,
+
+          prev: function() {
+            viewer.prev(true);
+          },
+
+          play: true,
+
+          next: function() {
+            viewer.next(true);
+          },
+
+          download: function() {
+            const a = document.createElement('a');
+
+            a.href = viewer.image.src;
+            a.download = viewer.image.alt;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          },
+        },
+      });
+    });
+    
+    
+    function loadImgs()
+    {
+        if(typeof Diary == 'undefined') return;
+        var id= getUrlParam("id");
+        $("#imglist").empty();
+        var list = JSON.parse(Diary.getDiaryImgList(id));
+        list.forEach(function(e){
+            var row ;
+            row = '<li><img data-original="'+e.img+'" src="'+e.img+'" alt=""></li>';
+            $("#imglist").append(row);
+        });
+    }
+  </script>
+</body>
+</html>

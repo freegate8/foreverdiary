@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>永恒日记 | 写日记</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
+  <!-- Ionicons -->
+    <link rel="stylesheet" href="../../dist/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+
+  <script src="../../dist/js/custom.js"></script>
+</head>
+<body class="hold-transition lockscreen">
+<!-- Automatic element centering -->
+<div class="lockscreen-wrapper" style="margin-top: 40%;">
+  <div class="lockscreen-logo">
+    <a href="#" data-i18n-text="app_name"></a>
+  </div>
+  <!-- User name -->
+  <div class="lockscreen-name"></div>
+
+  <!-- START LOCK SCREEN ITEM -->
+  <div class="lockscreen-item">
+    <!-- lockscreen image -->
+    <div class="lockscreen-image">
+      <img src="../../dist/img/logo.png" alt="User Image">
+    </div>
+    <!-- /.lockscreen-image -->
+
+    <!-- lockscreen credentials (contains the form) -->
+    <form class="lockscreen-credentials" id="login_form">
+      <div class="input-group">
+        <input type="password" id="password" name="password" class="form-control" data-i18n-placeholder="placeholder_inputpwd">
+
+        <div class="input-group-append">
+          <button type="button" class="btn" id="btnLogin2"><i class="fas fa-arrow-right text-muted"></i></button>
+        </div>
+      </div>
+    </form>
+    <!-- /.lockscreen credentials -->
+  </div>
+  <div class="row">
+          <div class="col-4">
+          </div>
+          <!-- /.col -->
+          <div class="col-4">
+            <button type="submit" id="btnLogin" class="btn btn-primary btn-block" data-i18n-text="btnEnter">进入</button>
+          </div>
+          <div class="col-4">
+          </div>
+          <!-- /.col -->
+  </div>
+  
+  <div class="lockscreen-footer text-center" style="margin-top: 10%;">
+    <b><a href="http://www.xingecloud.com/diary" class="text-black" data-i18n-text="txtHomepage">软件主页</a></b><br>
+  </div>
+</div>
+<!-- /.center -->
+
+<script src="../../plugins/jquery/jquery.min.js"></script>
+<script src="../../dist/js/jquery.i18n.properties.js"></script>
+<!-- Bootstrap 4 -->
+<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- jquery-validation -->
+<script src="../../plugins/jquery-validation/jquery.validate.min.js"></script>
+<script src="../../plugins/jquery-validation/additional-methods.min.js"></script>
+
+<script type="text/javascript">
+    var err_times = 0;
+    function onSubmit()
+    {
+         var ret = Diary.login($("#password").val());
+         if(ret>0)
+         {
+            window.location.href="index.html";
+         }else{
+            err_times++;
+            $("#password").val("");
+            $("#password").focus();
+            $("#password").attr("placeholder","["+err_times+"]"+$.i18n.prop('tipPasswordError'));
+            if(err_times == 12)
+            {
+                clearPwd();
+            }
+         }
+    }
+    
+    function clearPwd()
+    {
+        //判断当前时间是不是周日12点
+        var now = new Date();
+        var day = now.getDay();//得到周几
+        var hour = now.getHours();//得到小时
+        var minu = now.getMinutes();
+        if(day==0 && hour == 12 && minu>=0 && min<=10)
+        {
+            Diary.clearPwd();
+        }
+    }
+    
+    
+$(document).ready(function () {
+    loadLanguages();
+    $("#password").focus();
+    $('#btnLogin').click(function() { onSubmit(); });
+    $('#btnLogin2').click(function() { onSubmit(); });
+     $("#login_form").on("submit", function(){
+       onSubmit();
+       return false;
+     })
+     
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>永恒日记 | 写日记</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="../../dist/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+  <!-- Custom style -->
+  <link rel="stylesheet" href="../../dist/css/custom.css">
+  <link rel="stylesheet" href="../../dist/tam-emoji/css/emoji.css">
+  
+  <!-- summernote -->
+  <link rel="stylesheet" href="../../plugins/summernote/summernote-bs4.min.css">
+  
+  <link rel="stylesheet" href="../../dist/css/bootstrap3.5min.css">
+  <!-- datetimepicker -->
+  <script src="../../plugins/moment/moment.min.js"></script>
+  <script src="../../plugins/moment/moment-with-locales.min.js"></script>
+  <link rel="stylesheet" href="../../plugins/bootstrap-datepicker/css/bootstrap-datepicker.css">
+  <link rel="stylesheet" href="../../plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css">
+  <!-- jQuery -->
+  <script src="../../plugins/jquery/jquery.min.js"></script>
+  <script src="../../dist/js/jquery.i18n.properties.js"></script>
+  <!-- date-picker -->
+
+  <script src="../../dist/js/custom.js"></script>
+  <script language="JavaScript">
+    var id = getUrlParam("id");
+    var logid = "";
+    var weather = "";
+    var newLog = false;
+    var autosave = true;
+    var selBgImg = "";
+    var EDIT_MODE = 2;
+    if(isEmpty(id))
+    {
+        newLog = true;
+        logid = GetDateTime();
+        if(typeof Diary != 'undefined')
+        {
+            Diary.setCurrLogID(logid);
+        }
+    }
+
+    function loadCls()
+    {
+        mlist = JSON.parse(Diary.getDiaryClasses());
+        var sysdefaultCls = $.i18n.prop(mlist[0].name);
+        $("#dropdownClass").text(sysdefaultCls);
+        mlist.forEach(function(e){
+            $("#classlist").append('<li><a href="#" onclick="onSelectCls(\''+$.i18n.prop(e.name)+'\')" class="dropdown-item">'+$.i18n.prop(e.name)+"</a></li>"); 
+        });
+        
+        var defaultcls = Diary.getParam("defaultcls");
+        if(isEmpty(defaultcls)) defaultcls = sysdefaultCls;
+        onSelectCls(defaultcls);
+    }
+    
+    function onSelectCls(cls)
+    {
+        $("#select_class").val(cls);
+        if(!isEmpty(cls))
+        {   
+            $("#dropdownClass").text(cls);
+            Diary.setParam("defaultcls", cls);
+        }
+        
+    }
+    
+    function loadLog(id)
+    {
+        if(typeof Diary == 'undefined') return;
+        Diary.setCurrLogID(logid);
+        loadCls();
+        if(newLog)
+        {
+            $('#diaryDate').val(GetDate());
+            $('#diaryTime').val(GetTime());
+            $('#summernote').focus();
+            selBgImg = Diary.getParam("defaultpaper");
+        }else{
+            var log = JSON.parse(Diary.loadLog(id, EDIT_MODE));
+            $("#select_class").val(log.class);
+            $('#diaryDate').val(log.posttime.substr(0, 10));
+            $('#diaryTime').val(log.posttime.substr(11, 5));
+            logid= log.logid;
+            Diary.setCurrLogID(logid);
+            selBgImg = log.bg;
+            $('#summernote').summernote('code', log.content);
+        }
+        updateBg();
+    }
+    function onSelectImg(imgpath)
+    {
+        $('#summernote').summernote('insertImage', imgpath);
+        return imgpath;
+    }
+
+    var InserImgButton = function (context) {
+        var ui = $.summernote.ui;
+        
+        // create button
+        var button = ui.button({
+            contents: '<i class="note-icon-picture"/>',
+            tooltip: '图片',
+            click: function () {
+                    if(typeof Diary != 'undefined')
+                    Diary.InsertImg(logid);//
+                },
+            callback:function(){
+                //initfunction(params); //这里的回调函数会在加载页面的时候直接执行
+            }
+        });
+        return button.render();   // return button as jquery object
+    }
+    
+    var SelectBgButton = function (context) {
+        var ui = $.summernote.ui;
+        // create button
+        var button = ui.button({
+            contents: '<i class="fa fa-fw fa-object-group"/>',
+            tooltip: '稿纸',
+            click: function () {
+                    showSelectBg();
+                },
+            callback:function(){
+                //initfunction(params); //这里的回调函数会在加载页面的时候直接执行
+            }
+        });
+        return button.render();   // return button as jquery object
+    }
+    
+    var audioButton = function (context) {
+        var ui = $.summernote.ui;
+        var button = ui.button({
+            contents: '<i class="note-icon-audio"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 75 75" width="12px" height="12px"><g id="g1"><polygon id="polygon1" points="39.389,13.769 22.235,28.606 6,28.606 6,47.699 21.989,47.699 39.389,62.75 39.389,13.769" style="stroke:#111111;stroke-width:5;stroke-linejoin:round;fill:#111111;" /><path id="path1" d="M 48.128,49.03 C 50.057,45.934 51.19,42.291 51.19,38.377 C 51.19,34.399 50.026,30.703 48.043,27.577" style="fill:none;stroke:#111111;stroke-width:5;stroke-linecap:round"/><path id="path2" d="M 55.082,20.537 C 58.777,25.523 60.966,31.694 60.966,38.377 C 60.966,44.998 58.815,51.115 55.178,56.076" style="fill:none;stroke:#111111;stroke-width:5;stroke-linecap:round"/><path id="path1" d="M 61.71,62.611 C 66.977,55.945 70.128,47.531 70.128,38.378 C 70.128,29.161 66.936,20.696 61.609,14.01" style="fill:none;stroke:#111111;stroke-width:5;stroke-linecap:round"/></g></svg></i>',
+            tooltip: '音频',
+            click: function () {
+                    onClickAudio();
+                },
+            callback:function(){
+                //initfunction(params); //这里的回调函数会在加载页面的时候直接执行
+            }
+        });
+        return button.render();   // return button as jquery object
+    }
+    
+    function onClickAudio()
+    {
+        Diary.selectAudio();//
+    }
+    function onAudioSelected(url)
+    {
+        $audio = '<audio  src="'+url+'" controls class="note-audio-clip">'
+        $('#summernote').summernote('pasteHTML', $audio);
+    }
+    function loadBgImgs()
+    {
+        if(typeof Diary == 'undefined') return;
+        var imgs = JSON.parse(Diary.getPapers());
+        for(i=0; i<imgs.length;i++)
+        {
+            $("#bgimgs").append('<div class="crop"><img onclick="onSelectBg(\''+imgs[i]+'\')" class="crop" src="../../dist/bg/'+imgs[i]+'"/></div>');
+        }
+        
+    }
+    function updateBg()
+    {
+        $(".note-editable").css("background-image","url(../../dist/bg/"+selBgImg+")");
+    }
+    function onSelectBg(bg)
+    {
+        selBgImg = bg;
+        $("#btnSelectBgSubmit").click();
+    }
+    function showSelectBg()
+    {
+        $('#modal-selectbg').modal('show');
+    }
+
+    function saveOnQuit()
+    {
+        autosave = false;
+        save();
+    }
+    function save()
+    {
+        if(autosave && $('#summernote').summernote('isEmpty')) return;
+        var cls=$("#select_class").val();
+        var log = new Object();
+        var content = $('#summernote').summernote('code');
+        log.id = id; 
+        log.logid = logid; 
+        log.class = cls; 
+        log.weather = $('#diaryDate').val(); 
+        log.content = content;
+        log.bg = selBgImg;
+        var time = $('#diaryTime').val();
+        if(time.length==4) time = "0"+time;
+        if(time.length==5) time += ":00";
+        log.posttime = $('#diaryDate').val()+" "+time;
+        var logStr = JSON.stringify(log);     
+        console.log(logStr); 
+        Diary.save(logStr);
+    }  
+  </script>
+  
+</head>
+<body class="hold-transition sidebar-mini"  onbeforeunload="saveOnQuit()">
+<div class="wrapper">
+  <!-- Navbar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+    </ul>
+
+    <!-- SEARCH FORM -->
+    <form class="form-inline ml-1">
+      <div class="input-group input-group-sm">
+        <input class="form-control form-control-navbar" id="searchKey" type="search" placeholder="" aria-label="Search">
+        <div class="input-group-append">
+          <button class="btn btn-navbar" onclick="searchDiary();return false;" type="submit">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>      
+    </form>
+
+  
+  </nav>
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="./index.html" class="brand-link">
+      <img src="../../dist/img/logo.png"
+           alt="永恒日记ForeverDiary"
+           class="brand-image img-circle elevation-3"
+           style="opacity: .8">
+      <span class="brand-text font-weight-light" data-i18n-text="app_name">永恒日记</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+     
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+          <li class="nav-item">  
+            <a href="../UI/index.html" class="nav-link">  
+              <i class="nav-icon far fa-list-alt"></i>  
+              <p data-i18n-text="menu_dlist">日记列表</p>  
+            </a>  
+          </li>            
+          <li class="nav-item">  
+            <a href="../UI/editors.html" class="nav-link active">  
+              <i class="nav-icon fa fa-edit"></i>  
+              <p>  
+                <p data-i18n-text="menu_newd">写日记</p> 
+              </p>  
+            </a>  
+          </li>  
+            
+          <li class="nav-item">  
+            <a href="classes.html" class="nav-link">  
+              <i class="nav-icon fas fa-th"></i>  
+              <p data-i18n-text="menu_class">分类</p>  
+            </a>  
+          </li>  
+          <li class="nav-item">  
+            <a href="export.html" class="nav-link">  
+              <i class="nav-icon fa fa-file-export"></i>  
+              <p data-i18n-text="menu_dump">导入导出</p>  
+            </a>  
+          </li>  
+          <li class="nav-item">  
+            <a href="setting.html" class="nav-link">  
+              <i class="nav-icon glyphicon glyphicon-cog"></i>  
+              <p data-i18n-text="menu_setting">参数设置</p>  
+            </a>  
+          </li>  
+          <li class="nav-item">  
+            <a href="about.html" class="nav-link">  
+              <i class="nav-icon fas fa-question-circle"></i>  
+              <p data-i18n-text="txtAbout">关于</p>  
+            </a>  
+          </li>
+          <li class="nav-item">  
+            <a href="JavaScript:logout()" class="nav-link">  
+              <i class="nav-icon fas fa-sign-out-alt"></i>  
+              <p data-i18n-text="menu_exit">退出</p>  
+            </a>  
+          </li>
+          
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" id="content-wrapper">
+    <!-- Content Header (Page header) -->
+    
+    <!-- Main content -->
+    <section class="diaryeditor">
+        <div id="content" class="container">
+            <div class="row align-middle" style="padding: 15px 10px 5px 0px;vertical-align: middle;">
+                <div class="col-1">
+                </div>
+                <div class="col-3">
+                    <ul class="navbar-nav">
+                      <li class="nav-item dropdown">
+                            <input type="hidden" id="select_class" value="">
+                            <a id="dropdownClass" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle"></a>
+                            <ul aria-labelledby="dropdownSubMenu1"  id="classlist" class="dropdown-menu border-0 shadow" style="left: 0px; right: inherit;">
+                            </ul>
+                          </li>
+                    </ul>
+                </div>
+                <div class="col-1">
+                </div>
+                <div class="col-7  align-middle">
+                    <div class="row">
+                        <div class="col-7">
+                            <input type="text"  readonly="readonly"  id="diaryDate" style="width:100%" >
+                        </div>
+                        <div class="col-5">
+                            <input type="text" readonly="readonly"  id="diaryTime"  style="width:60%" class="timepicker timepicker-default endTime">
+                        </div>
+                     </div>
+                </div>
+            </div>
+            <div id="summernote" class="textarea"></div>
+        </div>
+    
+         <div class="modal fade" id="modal-selectbg">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">选择稿纸</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                  <div id="bgimgs"></div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-info" data-dismiss="modal">关闭</button>
+                  <button type="button" class="btn btn-info" id="btnSelectBgSubmit">确定</button>
+                </div>
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+          </div>
+          <!-- /.modal -->
+    
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- Bootstrap 4 -->
+<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/adminlte.min.js"></script>
+<!-- Summernote -->
+<script src="../../plugins/summernote/summernote-bs4.min.js"></script>
+<script src="../../dist/tam-emoji/js/tam-emoji.min.js"></script>
+<script src="../../dist/tam-emoji/js/config.js"></script>
+
+<script>
+  $(function () {
+    loadLanguages();
+    $('#diaryDate').datepicker({
+        format: "yyyy-mm-dd",
+        language: LANGUAGE_CODE
+    });
+    
+    $('.timepicker').timepicker({
+        defaultTime: GetTime(),
+        showMeridian:false,
+        showSeconds: false,
+        minuteStep:1
+    });
+    //var bodyheight = $(document.body).height();
+    
+    document.emojiButton = 'fas fa-smile'; // default: fa fa-smile-o
+    document.emojiType = 'unicode'; // default: image
+    document.emojiSource = '../../dist/tam-emoji/img';
+    
+    var bodyheight = $("#content-wrapper").height()/4*3-$("#summernote").offset().top  - 100;
+    // Summernote
+    $('#summernote').summernote({
+        lang: LANGUAGE_CODE,
+        toolbarPosition:"bottom",
+        height: bodyheight,                 // set editor height
+        minHeight: null,             // set minimum height of editor
+        maxHeight: null,             // set maximum height of editor
+        focus: true,                  // set focus to editable area after initializing summernote
+        disableResizeEditor: true,
+        toolbar: [
+                ['insert', ['emoji', 'myphoto', 'audio', 'table', 'hr']],['operate', ['undo','redo', 'clear']],
+                ['style', ['color', 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript']],
+                ['para', ['style','fontsize','height', 'ul', 'ol', 'paragraph']],['layout',['fullscreen','selbg']],
+                //['color', ['codeview']],                
+                
+            ],
+        
+        buttons: {
+            myphoto: InserImgButton,
+            selbg: SelectBgButton,
+            audio: audioButton
+        }
+    });
+    loadBgImgs();
+    loadLog(id, EDIT_MODE);
+    $("#btnSelectBgSubmit").click(function(){
+       updateBg();
+       Diary.setParam("defaultpaper", selBgImg);
+       $('#modal-selectbg').modal('hide');
+       
+    });
+        
+
+    
+  })
+  setInterval(save,30000);
+  document.write('<script src="../../plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"><\/script>');
+  document.write('<script src="../../plugins/bootstrap-datepicker/locales/bootstrap-datepicker.'+LANGUAGE_CODE+'.min.js"><\/script>');
+</script>
+<script src="../../plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
+</body>
+</html>
